@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Unit Test Report</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+<style>
+body {
+    font-family: Calibri, "Trebuchet MS", sans-serif;
+}
+* {
+    word-break: break-all;
+}
+table, td, th, .dataid {
+    border: 1px solid #aaa;
+    border-collapse: collapse;
+    background: #fff;
+}
+section {
+    background: rgba(0, 0, 0, 0.05);
+    margin: 2ex;
+    padding: 1ex;
+    border: 1px solid #999;
+    border-radius: 5px;
+}
+h1 {
+    font-size: 130%;
+}
+h2 {
+    font-size: 120%;
+}
+h3 {
+    font-size: 100%;
+}
+h4 {
+    font-size: 85%;
+}
+h1, h2, h3, h4, a[href] {
+    cursor: pointer;
+    color: #0074d9;
+    text-decoration: none;
+}
+h3 strong, a.failed {
+    color: #ff4136;
+}
+.failed {
+    color: #ff4136;
+}
+a.success {
+    color: #3d9970;
+}
+pre {
+    font-family: 'Consolas', 'Deja Vu Sans Mono',
+                 'Bitstream Vera Sans Mono', 'Monaco',
+                 'Courier New', monospace;
+}
+
+.test-details,
+.traceback {
+    display: none;
+}
+section:target .test-details {
+    display: block;
+}
+
+</style>
+</head>
+<body>
+    <h1>Overview</h1>
+    <section>
+        <table>
+            <tr>
+                <th>Class</th>
+                <th>Fail</th>
+                <th class="failed">Error</th>
+                <th>Skip</th>
+                <th>Success</th>
+                <th>Total</th>
+            </tr>
+                <tr>
+                    <td>test.functional.test_access_control.TestRBAC</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>2</td>
+                    <td>0</td>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <td>test.functional.test_access_control.TestRBACInfo</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>2</td>
+                    <td>0</td>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <td>test.functional.test_access_control.TestContainerACL</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>test.functional.test_account.TestAccountInNonDefaultDomain</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>test.functional.test_account.TestAccount</td>
+                    <td>0</td>
+                    <td class="failed">16</td>
+                    <td>8</td>
+                    <td>2</td>
+                    <td>26</td>
+                </tr>
+                <tr>
+                    <td><nose.suite.ContextSuite context=test</td>
+                    <td>0</td>
+                    <td class="failed">1</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td><nose.suite.ContextSuite context=test.functional</td>
+                    <td>0</td>
+                    <td class="failed">8</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>8</td>
+                </tr>
+            <tr>
+                <td><strong>Total</strong></td>
+                <td>0</td>
+                <td class="failed">25</td>
+                <td>14</td>
+                <td>2</td>
+                <td>41</td>
+            </tr>
+        </table>
+    </section>
+    <h1>Failure details</h1>
+            <section>
+                <h2>test.functional.test_account.TestAccount (0 failures, 16 errors)</h2>
+                <div>
+                        <section id="test.functional.test_account.TestAccount:test_bad_metadata3">
+                            <h3>test_bad_metadata3: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 67, in testPartExecutor
+    yield
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 625, in run
+    testMethod()
+  File "/home/travis/swift/test/functional/test_account.py", line 868, in test_bad_metadata3
+    resp = retry(post, headers)
+  File "/home/travis/swift/test/functional/__init__.py", line 1035, in retry
+    *args, **kwargs)
+  File "/home/travis/swift/test/functional/test_account.py", line 840, in post
+    conn.request('POST', parsed.path, '', headers)
+  File "/home/travis/swift/test/functional/__init__.py", line 969, in request_with_policy
+    return orig_request(method, url, body, headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 490, in send
+    raise ConnectionError(err, request=request)
+ConnectionError: ('Connection aborted.', BadStatusLine("''",))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: http://127.0.0.1:8080 "POST /v1/AUTH_test HTTP/1.1" 204 0
+urllib3.connectionpool: DEBUG: http://127.0.0.1:8080 "POST /v1/AUTH_test HTTP/1.1" 400 74
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (2): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>('Connection aborted.', BadStatusLine("''",))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: http://127.0.0.1:8080 "POST /v1/AUTH_test HTTP/1.1" 204 0
+urllib3.connectionpool: DEBUG: http://127.0.0.1:8080 "POST /v1/AUTH_test HTTP/1.1" 400 74
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (2): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="test.functional.test_account.TestAccount:test_bad_metadata3">
+                            <h3>test_bad_metadata3: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 67, in testPartExecutor
+    yield
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 628, in run
+    self.tearDown()
+  File "/home/travis/swift/test/functional/test_account.py", line 98, in tearDown
+    new_metadata = self.get_meta().keys()
+  File "/home/travis/swift/test/functional/test_account.py", line 48, in get_meta
+    resp = retry(head)
+  File "/home/travis/swift/test/functional/__init__.py", line 1035, in retry
+    *args, **kwargs)
+  File "/home/travis/swift/test/functional/test_account.py", line 46, in head
+    conn.request('HEAD', parsed.path, '', {'X-Auth-Token': token})
+  File "/home/travis/swift/test/functional/__init__.py", line 969, in request_with_policy
+    return orig_request(method, url, body, headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed55f710>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: http://127.0.0.1:8080 "POST /v1/AUTH_test HTTP/1.1" 204 0
+urllib3.connectionpool: DEBUG: http://127.0.0.1:8080 "POST /v1/AUTH_test HTTP/1.1" 400 74
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (2): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed55f710>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: http://127.0.0.1:8080 "POST /v1/AUTH_test HTTP/1.1" 204 0
+urllib3.connectionpool: DEBUG: http://127.0.0.1:8080 "POST /v1/AUTH_test HTTP/1.1" 400 74
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (2): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="test.functional.test_account.TestAccount:test_invalid_acl_keys">
+                            <h3>test_invalid_acl_keys: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 67, in testPartExecutor
+    yield
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 628, in run
+    self.tearDown()
+  File "/home/travis/swift/test/functional/test_account.py", line 98, in tearDown
+    new_metadata = self.get_meta().keys()
+  File "/home/travis/swift/test/functional/test_account.py", line 48, in get_meta
+    resp = retry(head)
+  File "/home/travis/swift/test/functional/__init__.py", line 1035, in retry
+    *args, **kwargs)
+  File "/home/travis/swift/test/functional/test_account.py", line 46, in head
+    conn.request('HEAD', parsed.path, '', {'X-Auth-Token': token})
+  File "/home/travis/swift/test/functional/__init__.py", line 969, in request_with_policy
+    return orig_request(method, url, body, headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed55f610>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (3): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed55f610>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (3): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="test.functional.test_account.TestAccount:test_invalid_acl_values">
+                            <h3>test_invalid_acl_values: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 67, in testPartExecutor
+    yield
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 628, in run
+    self.tearDown()
+  File "/home/travis/swift/test/functional/test_account.py", line 98, in tearDown
+    new_metadata = self.get_meta().keys()
+  File "/home/travis/swift/test/functional/test_account.py", line 48, in get_meta
+    resp = retry(head)
+  File "/home/travis/swift/test/functional/__init__.py", line 1035, in retry
+    *args, **kwargs)
+  File "/home/travis/swift/test/functional/test_account.py", line 46, in head
+    conn.request('HEAD', parsed.path, '', {'X-Auth-Token': token})
+  File "/home/travis/swift/test/functional/__init__.py", line 969, in request_with_policy
+    return orig_request(method, url, body, headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed55fdd0>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (4): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed55fdd0>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (4): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="test.functional.test_account.TestAccount:test_invalid_acls">
+                            <h3>test_invalid_acls: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 67, in testPartExecutor
+    yield
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 625, in run
+    testMethod()
+  File "/home/travis/swift/test/functional/test_account.py", line 156, in test_invalid_acls
+    resp = retry(post, headers=headers, use_account=1)
+  File "/home/travis/swift/test/functional/__init__.py", line 1035, in retry
+    *args, **kwargs)
+  File "/home/travis/swift/test/functional/test_account.py", line 147, in post
+    conn.request('POST', parsed.path, '', new_headers)
+  File "/home/travis/swift/test/functional/__init__.py", line 969, in request_with_policy
+    return orig_request(method, url, body, headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4e7f50>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (5): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (6): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4e7f50>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (5): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (6): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="test.functional.test_account.TestAccount:test_invalid_acls">
+                            <h3>test_invalid_acls: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 67, in testPartExecutor
+    yield
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 628, in run
+    self.tearDown()
+  File "/home/travis/swift/test/functional/test_account.py", line 98, in tearDown
+    new_metadata = self.get_meta().keys()
+  File "/home/travis/swift/test/functional/test_account.py", line 48, in get_meta
+    resp = retry(head)
+  File "/home/travis/swift/test/functional/__init__.py", line 1035, in retry
+    *args, **kwargs)
+  File "/home/travis/swift/test/functional/test_account.py", line 46, in head
+    conn.request('HEAD', parsed.path, '', {'X-Auth-Token': token})
+  File "/home/travis/swift/test/functional/__init__.py", line 969, in request_with_policy
+    return orig_request(method, url, body, headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478190>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (5): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (6): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478190>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (5): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (6): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="test.functional.test_account.TestAccount:test_metadata">
+                            <h3>test_metadata: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 67, in testPartExecutor
+    yield
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 625, in run
+    testMethod()
+  File "/home/travis/swift/test/functional/test_account.py", line 118, in test_metadata
+    resp = retry(post, '')
+  File "/home/travis/swift/test/functional/__init__.py", line 1035, in retry
+    *args, **kwargs)
+  File "/home/travis/swift/test/functional/test_account.py", line 107, in post
+    {'X-Auth-Token': token, 'X-Account-Meta-Test': value})
+  File "/home/travis/swift/test/functional/__init__.py", line 969, in request_with_policy
+    return orig_request(method, url, body, headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4e7f90>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (7): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (8): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4e7f90>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (7): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (8): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="test.functional.test_account.TestAccount:test_metadata">
+                            <h3>test_metadata: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 67, in testPartExecutor
+    yield
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 628, in run
+    self.tearDown()
+  File "/home/travis/swift/test/functional/test_account.py", line 98, in tearDown
+    new_metadata = self.get_meta().keys()
+  File "/home/travis/swift/test/functional/test_account.py", line 48, in get_meta
+    resp = retry(head)
+  File "/home/travis/swift/test/functional/__init__.py", line 1035, in retry
+    *args, **kwargs)
+  File "/home/travis/swift/test/functional/test_account.py", line 46, in head
+    conn.request('HEAD', parsed.path, '', {'X-Auth-Token': token})
+  File "/home/travis/swift/test/functional/__init__.py", line 969, in request_with_policy
+    return orig_request(method, url, body, headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478150>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (7): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (8): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478150>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (7): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (8): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="test.functional.test_account.TestAccount:test_multi_metadata">
+                            <h3>test_multi_metadata: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 67, in testPartExecutor
+    yield
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 625, in run
+    testMethod()
+  File "/home/travis/swift/test/functional/test_account.py", line 760, in test_multi_metadata
+    resp = retry(post, 'X-Account-Meta-One', '1')
+  File "/home/travis/swift/test/functional/__init__.py", line 1035, in retry
+    *args, **kwargs)
+  File "/home/travis/swift/test/functional/test_account.py", line 753, in post
+    {'X-Auth-Token': token, name: value})
+  File "/home/travis/swift/test/functional/__init__.py", line 969, in request_with_policy
+    return orig_request(method, url, body, headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4e7e10>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (9): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (10): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4e7e10>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (9): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (10): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="test.functional.test_account.TestAccount:test_multi_metadata">
+                            <h3>test_multi_metadata: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 67, in testPartExecutor
+    yield
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 628, in run
+    self.tearDown()
+  File "/home/travis/swift/test/functional/test_account.py", line 98, in tearDown
+    new_metadata = self.get_meta().keys()
+  File "/home/travis/swift/test/functional/test_account.py", line 48, in get_meta
+    resp = retry(head)
+  File "/home/travis/swift/test/functional/__init__.py", line 1035, in retry
+    *args, **kwargs)
+  File "/home/travis/swift/test/functional/test_account.py", line 46, in head
+    conn.request('HEAD', parsed.path, '', {'X-Auth-Token': token})
+  File "/home/travis/swift/test/functional/__init__.py", line 969, in request_with_policy
+    return orig_request(method, url, body, headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478210>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (9): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (10): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478210>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (9): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (10): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="test.functional.test_account.TestAccount:test_protected_tempurl">
+                            <h3>test_protected_tempurl: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 67, in testPartExecutor
+    yield
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 628, in run
+    self.tearDown()
+  File "/home/travis/swift/test/functional/test_account.py", line 98, in tearDown
+    new_metadata = self.get_meta().keys()
+  File "/home/travis/swift/test/functional/test_account.py", line 48, in get_meta
+    resp = retry(head)
+  File "/home/travis/swift/test/functional/__init__.py", line 1035, in retry
+    *args, **kwargs)
+  File "/home/travis/swift/test/functional/test_account.py", line 46, in head
+    conn.request('HEAD', parsed.path, '', {'X-Auth-Token': token})
+  File "/home/travis/swift/test/functional/__init__.py", line 969, in request_with_policy
+    return orig_request(method, url, body, headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4e7f90>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (11): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4e7f90>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (11): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="test.functional.test_account.TestAccount:test_read_only_acl">
+                            <h3>test_read_only_acl: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 67, in testPartExecutor
+    yield
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 628, in run
+    self.tearDown()
+  File "/home/travis/swift/test/functional/test_account.py", line 98, in tearDown
+    new_metadata = self.get_meta().keys()
+  File "/home/travis/swift/test/functional/test_account.py", line 48, in get_meta
+    resp = retry(head)
+  File "/home/travis/swift/test/functional/__init__.py", line 1035, in retry
+    *args, **kwargs)
+  File "/home/travis/swift/test/functional/test_account.py", line 46, in head
+    conn.request('HEAD', parsed.path, '', {'X-Auth-Token': token})
+  File "/home/travis/swift/test/functional/__init__.py", line 969, in request_with_policy
+    return orig_request(method, url, body, headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478350>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (12): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478350>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (12): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="test.functional.test_account.TestAccount:test_read_write_acl">
+                            <h3>test_read_write_acl: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 67, in testPartExecutor
+    yield
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 628, in run
+    self.tearDown()
+  File "/home/travis/swift/test/functional/test_account.py", line 98, in tearDown
+    new_metadata = self.get_meta().keys()
+  File "/home/travis/swift/test/functional/test_account.py", line 48, in get_meta
+    resp = retry(head)
+  File "/home/travis/swift/test/functional/__init__.py", line 1035, in retry
+    *args, **kwargs)
+  File "/home/travis/swift/test/functional/test_account.py", line 46, in head
+    conn.request('HEAD', parsed.path, '', {'X-Auth-Token': token})
+  File "/home/travis/swift/test/functional/__init__.py", line 969, in request_with_policy
+    return orig_request(method, url, body, headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478210>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (13): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478210>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (13): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="test.functional.test_account.TestAccount:test_swift_account_acls">
+                            <h3>test_swift_account_acls: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 67, in testPartExecutor
+    yield
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 628, in run
+    self.tearDown()
+  File "/home/travis/swift/test/functional/test_account.py", line 98, in tearDown
+    new_metadata = self.get_meta().keys()
+  File "/home/travis/swift/test/functional/test_account.py", line 48, in get_meta
+    resp = retry(head)
+  File "/home/travis/swift/test/functional/__init__.py", line 1035, in retry
+    *args, **kwargs)
+  File "/home/travis/swift/test/functional/test_account.py", line 46, in head
+    conn.request('HEAD', parsed.path, '', {'X-Auth-Token': token})
+  File "/home/travis/swift/test/functional/__init__.py", line 969, in request_with_policy
+    return orig_request(method, url, body, headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478150>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (14): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478150>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (14): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="test.functional.test_account.TestAccount:test_swift_prohibits_garbage_account_acls">
+                            <h3>test_swift_prohibits_garbage_account_acls: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 67, in testPartExecutor
+    yield
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 625, in run
+    testMethod()
+  File "/home/travis/swift/test/functional/test_account.py", line 704, in test_swift_prohibits_garbage_account_acls
+    resp = retry(post, headers={'X-Account-Access-Control': '{}'})
+  File "/home/travis/swift/test/functional/__init__.py", line 1035, in retry
+    *args, **kwargs)
+  File "/home/travis/swift/test/functional/test_account.py", line 646, in post
+    conn.request('POST', parsed.path, '', new_headers)
+  File "/home/travis/swift/test/functional/__init__.py", line 969, in request_with_policy
+    return orig_request(method, url, body, headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4787d0>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (15): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (16): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (17): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4787d0>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (15): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (16): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (17): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="test.functional.test_account.TestAccount:test_swift_prohibits_garbage_account_acls">
+                            <h3>test_swift_prohibits_garbage_account_acls: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 67, in testPartExecutor
+    yield
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/unittest2/case.py", line 628, in run
+    self.tearDown()
+  File "/home/travis/swift/test/functional/test_account.py", line 98, in tearDown
+    new_metadata = self.get_meta().keys()
+  File "/home/travis/swift/test/functional/test_account.py", line 48, in get_meta
+    resp = retry(head)
+  File "/home/travis/swift/test/functional/__init__.py", line 1035, in retry
+    *args, **kwargs)
+  File "/home/travis/swift/test/functional/test_account.py", line 46, in head
+    conn.request('HEAD', parsed.path, '', {'X-Auth-Token': token})
+  File "/home/travis/swift/test/functional/__init__.py", line 969, in request_with_policy
+    return orig_request(method, url, body, headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478710>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (15): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (16): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (17): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /v1/AUTH_test (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478710>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (15): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (16): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (17): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                </div>
+            </section>
+            <section>
+                <h2><nose.suite.ContextSuite context=test (0 failures, 1 errors)</h2>
+                <div>
+                        <section id="<nose.suite.ContextSuite context=test:functional>:teardown">
+                            <h3>functional>:teardown: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 228, in run
+    self.tearDown()
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 351, in tearDown
+    self.teardownContext(ancestor)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 367, in teardownContext
+    try_run(context, names)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/util.py", line 471, in try_run
+    return func()
+  File "/home/travis/swift/test/functional/__init__.py", line 902, in teardown_package
+    conn.authenticate()
+  File "/home/travis/swift/test/functional/swift_test_client.py", line 160, in authenticate
+    auth_url, auth_user, self.password, **authargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 643, in get_auth
+    timeout=timeout)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 494, in get_auth_1_0
+    conn.request(method, parsed.path, '', headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4784d0>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4784d0>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                </div>
+            </section>
+            <section>
+                <h2><nose.suite.ContextSuite context=test.functional (0 failures, 8 errors)</h2>
+                <div>
+                        <section id="<nose.suite.ContextSuite context=test.functional:test_account>:teardown">
+                            <h3>test_account>:teardown: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 228, in run
+    self.tearDown()
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 351, in tearDown
+    self.teardownContext(ancestor)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 367, in teardownContext
+    try_run(context, names)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/util.py", line 471, in try_run
+    return func()
+  File "/home/travis/swift/test/functional/test_account.py", line 37, in tearDownModule
+    tf.teardown_package()
+  File "/home/travis/swift/test/functional/__init__.py", line 902, in teardown_package
+    conn.authenticate()
+  File "/home/travis/swift/test/functional/swift_test_client.py", line 160, in authenticate
+    auth_url, auth_user, self.password, **authargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 643, in get_auth
+    timeout=timeout)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 494, in get_auth_1_0
+    conn.request(method, parsed.path, '', headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478b10>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478b10>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="<nose.suite.ContextSuite context=test.functional:test_container>:setup">
+                            <h3>test_container>:setup: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 209, in run
+    self.setUp()
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 292, in setUp
+    self.setupContext(ancestor)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 315, in setupContext
+    try_run(context, names)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/util.py", line 471, in try_run
+    return func()
+  File "/home/travis/swift/test/functional/test_container.py", line 31, in setUpModule
+    tf.setup_package()
+  File "/home/travis/swift/test/functional/__init__.py", line 890, in setup_package
+    get_cluster_info()
+  File "/home/travis/swift/test/functional/__init__.py", line 639, in get_cluster_info
+    conn.authenticate()
+  File "/home/travis/swift/test/functional/swift_test_client.py", line 160, in authenticate
+    auth_url, auth_user, self.password, **authargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 643, in get_auth
+    timeout=timeout)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 494, in get_auth_1_0
+    conn.request(method, parsed.path, '', headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4785d0>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4785d0>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="<nose.suite.ContextSuite context=test.functional:test_dlo>:setup">
+                            <h3>test_dlo>:setup: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 209, in run
+    self.setUp()
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 292, in setUp
+    self.setupContext(ancestor)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 315, in setupContext
+    try_run(context, names)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/util.py", line 471, in try_run
+    return func()
+  File "/home/travis/swift/test/functional/test_dlo.py", line 23, in setUpModule
+    tf.setup_package()
+  File "/home/travis/swift/test/functional/__init__.py", line 890, in setup_package
+    get_cluster_info()
+  File "/home/travis/swift/test/functional/__init__.py", line 639, in get_cluster_info
+    conn.authenticate()
+  File "/home/travis/swift/test/functional/swift_test_client.py", line 160, in authenticate
+    auth_url, auth_user, self.password, **authargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 643, in get_auth
+    timeout=timeout)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 494, in get_auth_1_0
+    conn.request(method, parsed.path, '', headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed443390>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed443390>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="<nose.suite.ContextSuite context=test.functional:test_object>:setup">
+                            <h3>test_object>:setup: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 209, in run
+    self.setUp()
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 292, in setUp
+    self.setupContext(ancestor)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 315, in setupContext
+    try_run(context, names)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/util.py", line 471, in try_run
+    return func()
+  File "/home/travis/swift/test/functional/test_object.py", line 33, in setUpModule
+    tf.setup_package()
+  File "/home/travis/swift/test/functional/__init__.py", line 890, in setup_package
+    get_cluster_info()
+  File "/home/travis/swift/test/functional/__init__.py", line 639, in get_cluster_info
+    conn.authenticate()
+  File "/home/travis/swift/test/functional/swift_test_client.py", line 160, in authenticate
+    auth_url, auth_user, self.password, **authargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 643, in get_auth
+    timeout=timeout)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 494, in get_auth_1_0
+    conn.request(method, parsed.path, '', headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed443390>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed443390>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="<nose.suite.ContextSuite context=test.functional:test_slo>:setup">
+                            <h3>test_slo>:setup: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 209, in run
+    self.setUp()
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 292, in setUp
+    self.setupContext(ancestor)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 315, in setupContext
+    try_run(context, names)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/util.py", line 471, in try_run
+    return func()
+  File "/home/travis/swift/test/functional/test_slo.py", line 31, in setUpModule
+    tf.setup_package()
+  File "/home/travis/swift/test/functional/__init__.py", line 890, in setup_package
+    get_cluster_info()
+  File "/home/travis/swift/test/functional/__init__.py", line 639, in get_cluster_info
+    conn.authenticate()
+  File "/home/travis/swift/test/functional/swift_test_client.py", line 160, in authenticate
+    auth_url, auth_user, self.password, **authargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 643, in get_auth
+    timeout=timeout)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 494, in get_auth_1_0
+    conn.request(method, parsed.path, '', headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4783d0>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4783d0>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="<nose.suite.ContextSuite context=test.functional:test_tempurl>:setup">
+                            <h3>test_tempurl>:setup: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 209, in run
+    self.setUp()
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 292, in setUp
+    self.setupContext(ancestor)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 315, in setupContext
+    try_run(context, names)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/util.py", line 471, in try_run
+    return func()
+  File "/home/travis/swift/test/functional/test_tempurl.py", line 35, in setUpModule
+    tf.setup_package()
+  File "/home/travis/swift/test/functional/__init__.py", line 890, in setup_package
+    get_cluster_info()
+  File "/home/travis/swift/test/functional/__init__.py", line 639, in get_cluster_info
+    conn.authenticate()
+  File "/home/travis/swift/test/functional/swift_test_client.py", line 160, in authenticate
+    auth_url, auth_user, self.password, **authargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 643, in get_auth
+    timeout=timeout)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 494, in get_auth_1_0
+    conn.request(method, parsed.path, '', headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478710>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478710>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="<nose.suite.ContextSuite context=test.functional:test_versioned_writes>:setup">
+                            <h3>test_versioned_writes>:setup: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 209, in run
+    self.setUp()
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 292, in setUp
+    self.setupContext(ancestor)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 315, in setupContext
+    try_run(context, names)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/util.py", line 471, in try_run
+    return func()
+  File "/home/travis/swift/test/functional/test_versioned_writes.py", line 31, in setUpModule
+    tf.setup_package()
+  File "/home/travis/swift/test/functional/__init__.py", line 890, in setup_package
+    get_cluster_info()
+  File "/home/travis/swift/test/functional/__init__.py", line 639, in get_cluster_info
+    conn.authenticate()
+  File "/home/travis/swift/test/functional/swift_test_client.py", line 160, in authenticate
+    auth_url, auth_user, self.password, **authargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 643, in get_auth
+    timeout=timeout)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 494, in get_auth_1_0
+    conn.request(method, parsed.path, '', headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478650>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed478650>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                        <section id="<nose.suite.ContextSuite context=test.functional:tests>:setup">
+                            <h3>tests>:setup: <strong>requests.exceptions.ConnectionError</strong></h3>
+                            <div class="test-details">
+                                <h4>Traceback</h4>
+                                <pre class="traceback">Traceback (most recent call last):
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 209, in run
+    self.setUp()
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 292, in setUp
+    self.setupContext(ancestor)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/suite.py", line 315, in setupContext
+    try_run(context, names)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/nose/util.py", line 471, in try_run
+    return func()
+  File "/home/travis/swift/test/functional/tests.py", line 43, in setUpModule
+    tf.setup_package()
+  File "/home/travis/swift/test/functional/__init__.py", line 890, in setup_package
+    get_cluster_info()
+  File "/home/travis/swift/test/functional/__init__.py", line 639, in get_cluster_info
+    conn.authenticate()
+  File "/home/travis/swift/test/functional/swift_test_client.py", line 160, in authenticate
+    auth_url, auth_user, self.password, **authargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 643, in get_auth
+    timeout=timeout)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 494, in get_auth_1_0
+    conn.request(method, parsed.path, '', headers)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 436, in request
+    files=files, **self.requests_args)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/swiftclient/client.py", line 419, in _request
+    return self.request_session.request(*arg, **kwarg)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 502, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/sessions.py", line 612, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/travis/swift-venv/local/lib/python2.7/site-packages/requests/adapters.py", line 504, in send
+    raise ConnectionError(e, request=request)
+ConnectionError: HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4783d0>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------
+</pre>
+                                <h4>Details</h4>
+                                <pre>HTTPConnectionPool(host='127.0.0.1', port=8080): Max retries exceeded with url: /auth/v1.0 (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fd3ed4783d0>: Failed to establish a new connection: [Errno 111] ECONNREFUSED',))
+-------------------- >> begin captured logging << --------------------
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+urllib3.connectionpool: DEBUG: Starting new HTTP connection (1): 127.0.0.1
+--------------------- >> end captured logging << ---------------------</pre>
+                            </div>
+                        </section>
+                </div>
+            </section>
+
+    <h1>All tests</h1>
+    <section>
+        <h2>test.functional.test_access_control.TestRBAC (0 failures, 0 errors)</h2>
+        <ul>
+                <li><a class="failed" href="#test.functional.test_access_control.TestRBAC:test_rbac">test_rbac</a></li>
+                <li><a class="failed" href="#test.functional.test_access_control.TestRBAC:test_rbac_with_service_prefix">test_rbac_with_service_prefix</a></li>
+        </ul>
+    </section>
+    <section>
+        <h2>test.functional.test_access_control.TestRBACInfo (0 failures, 0 errors)</h2>
+        <ul>
+                <li><a class="failed" href="#test.functional.test_access_control.TestRBACInfo:test_rbac_info">test_rbac_info</a></li>
+                <li><a class="failed" href="#test.functional.test_access_control.TestRBACInfo:test_rbac_info_with_service_prefix">test_rbac_info_with_service_prefix</a></li>
+        </ul>
+    </section>
+    <section>
+        <h2>test.functional.test_access_control.TestContainerACL (0 failures, 0 errors)</h2>
+        <ul>
+                <li><a class="failed" href="#test.functional.test_access_control.TestContainerACL:test_container_acl">test_container_acl</a></li>
+        </ul>
+    </section>
+    <section>
+        <h2>test.functional.test_account.TestAccountInNonDefaultDomain (0 failures, 0 errors)</h2>
+        <ul>
+                <li><a class="failed" href="#test.functional.test_account.TestAccountInNonDefaultDomain:test_project_domain_id_header">test_project_domain_id_header</a></li>
+        </ul>
+    </section>
+    <section>
+        <h2>test.functional.test_account.TestAccount (0 failures, 16 errors)</h2>
+        <ul>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_account_acls">test_account_acls</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_admin_acl">test_admin_acl</a></li>
+                <li><a class="success">test_bad_metadata</a></li>
+                <li><a class="success">test_bad_metadata2</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_bad_metadata3">test_bad_metadata3</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_bad_metadata3">test_bad_metadata3</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_invalid_acl_keys">test_invalid_acl_keys</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_invalid_acl_keys">test_invalid_acl_keys</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_invalid_acl_values">test_invalid_acl_values</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_invalid_acl_values">test_invalid_acl_values</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_invalid_acls">test_invalid_acls</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_invalid_acls">test_invalid_acls</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_metadata">test_metadata</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_metadata">test_metadata</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_multi_metadata">test_multi_metadata</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_multi_metadata">test_multi_metadata</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_protected_tempurl">test_protected_tempurl</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_protected_tempurl">test_protected_tempurl</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_read_only_acl">test_read_only_acl</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_read_only_acl">test_read_only_acl</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_read_write_acl">test_read_write_acl</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_read_write_acl">test_read_write_acl</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_swift_account_acls">test_swift_account_acls</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_swift_account_acls">test_swift_account_acls</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_swift_prohibits_garbage_account_acls">test_swift_prohibits_garbage_account_acls</a></li>
+                <li><a class="failed" href="#test.functional.test_account.TestAccount:test_swift_prohibits_garbage_account_acls">test_swift_prohibits_garbage_account_acls</a></li>
+        </ul>
+    </section>
+    <section>
+        <h2><nose.suite.ContextSuite context=test (0 failures, 1 errors)</h2>
+        <ul>
+                <li><a class="failed" href="#<nose.suite.ContextSuite context=test:functional>:teardown">functional>:teardown</a></li>
+        </ul>
+    </section>
+    <section>
+        <h2><nose.suite.ContextSuite context=test.functional (0 failures, 8 errors)</h2>
+        <ul>
+                <li><a class="failed" href="#<nose.suite.ContextSuite context=test.functional:test_account>:teardown">test_account>:teardown</a></li>
+                <li><a class="failed" href="#<nose.suite.ContextSuite context=test.functional:test_container>:setup">test_container>:setup</a></li>
+                <li><a class="failed" href="#<nose.suite.ContextSuite context=test.functional:test_dlo>:setup">test_dlo>:setup</a></li>
+                <li><a class="failed" href="#<nose.suite.ContextSuite context=test.functional:test_object>:setup">test_object>:setup</a></li>
+                <li><a class="failed" href="#<nose.suite.ContextSuite context=test.functional:test_slo>:setup">test_slo>:setup</a></li>
+                <li><a class="failed" href="#<nose.suite.ContextSuite context=test.functional:test_tempurl>:setup">test_tempurl>:setup</a></li>
+                <li><a class="failed" href="#<nose.suite.ContextSuite context=test.functional:test_versioned_writes>:setup">test_versioned_writes>:setup</a></li>
+                <li><a class="failed" href="#<nose.suite.ContextSuite context=test.functional:tests>:setup">tests>:setup</a></li>
+        </ul>
+    </section>
+</body>
+<script>
+    Array.prototype.forEach.call(document.querySelectorAll('h1, h2, h3, h4'), function(el) {
+        el.addEventListener('click', function() {
+            el.nextElementSibling.style.display = document.defaultView.getComputedStyle(el.nextElementSibling).display == 'none' ? 'block' : 'none';
+        })
+    })
+</script>
+</html>
