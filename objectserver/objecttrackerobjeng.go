@@ -68,8 +68,7 @@ func (ote *objectTrackerEngine) New(vars map[string]string, needData bool, async
 		ot, err = internal.NewObjectTracker(
 			path.Join(ote.devicesPath, vars["device"]),
 			ote.ringPartPower,
-			6,  // diskParkPower, hardcoded for now, giving 64 databases per device
-			64, // chexorsMod, hardcoded for now
+			6, // diskParkPower, hardcoded for now, giving 64 databases per device
 			zap.L(),
 		)
 		if err != nil {

@@ -5,29 +5,15 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"hash/fnv"
 	"os"
 	"path"
 	"strings"
-	"time"
 
 	"github.com/gholt/kvt"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/troubling/hummingbird/common/fs"
 	"go.uber.org/zap"
 )
-
-func updateChexorFNV64a(chexorFNV64a uint64, hsh string, timestamp int64) uint64 {
-	h := fnv.New64a()
-	h.Write([]byte(fmt.Sprintf("%s-%d", hsh, timestamp)))
-	return chexorFNV64a ^ h.Sum64()
-}
-
-func updateMetaChexorFNV64a(chexorFNV64a uint64, hsh, metahash string) uint64 {
-	h := fnv.New64a()
-	h.Write([]byte(fmt.Sprintf("%s-%s", hsh, metahash)))
-	return chexorFNV64a ^ h.Sum64()
-}
 
 // kvtCondense discards metadata based on the Swift object metadata rules. A
 // Swift POST must contain all the metadata desired with no earlier metadata
@@ -72,15 +58,12 @@ func kvtCondense(s kvt.Store) {
 // that many ring partitions per drive. It will work with fewer, but it will
 // perform better if it can use all 64 databases.
 type ObjectTracker struct {
-	path                string
-	ringPartPower       uint
-	diskPartPower       uint
-	chexorsMod          int
-	chexorsModTable     string
-	metaChexorsModTable string
-	tempPath            string
-	dbs                 []*sql.DB
-	logger              *zap.Logger
+	path          string
+	ringPartPower uint
+	diskPartPower uint
+	tempPath      string
+	dbs           []*sql.DB
+	logger        *zap.Logger
 }
 
 // NewObjectTracker creates a ObjectTracker to manage the path given.
@@ -90,28 +73,15 @@ type ObjectTracker struct {
 // least, that's our plan for now, as 1<<6 gives 64 databases per disk and ends
 // up with not too much over 1 million objects (not including tombstones) per
 // database on an 8T disk with 100K average sized objects.
-//
-// The chexorsMod setting is the modulo divisor used against the object hashes
-// to split them into distinct chexors. These are used with replication to
-// quickly determine if two nodes have different data. If you assume a fill
-// size of around 1 million objects, perhaps a 64 chexorsMod would work, giving
-// about 15,000 objects per chexor. ChexorsMod cannot be less than 1 or greater
-// than 256. It also cannot currently be changed after deployment. If we need
-// convert existing data to a new ChexorsMod later, it is possible, we'll just
-// have to add the code for it.
-func NewObjectTracker(pth string, ringPartPower, diskPartPower uint, chexorsMod int, logger *zap.Logger) (*ObjectTracker, error) {
+func NewObjectTracker(pth string, ringPartPower, diskPartPower uint, logger *zap.Logger) (*ObjectTracker, error) {
 	if ringPartPower <= diskPartPower {
 		return nil, fmt.Errorf("ringPartPower must be greater than diskPartPower: %d is not greater than %d", ringPartPower, diskPartPower)
-	}
-	if chexorsMod < 1 || chexorsMod > 256 {
-		return nil, fmt.Errorf("chexorsMod must be from 1 to 256; it was %d", chexorsMod)
 	}
 	ot := &ObjectTracker{
 		path:          pth,
 		tempPath:      path.Join(pth, "temp"),
 		ringPartPower: ringPartPower,
 		diskPartPower: diskPartPower,
-		chexorsMod:    chexorsMod,
 		dbs:           make([]*sql.DB, 1<<diskPartPower),
 		logger:        logger,
 	}
@@ -148,7 +118,7 @@ func (ot *ObjectTracker) init(dbi int) error {
 	rows, err := tx.Query(`
         SELECT name
         FROM sqlite_master
-        WHERE name = 'databaseMetadata'
+        WHERE name = 'objects'
     `)
 	if err != nil {
 		return err
@@ -160,130 +130,17 @@ func (ot *ObjectTracker) init(dbi int) error {
 	}
 	if !tableExists {
 		_, err = tx.Exec(`
-            CREATE TABLE databaseMetadata (
-                key TEXT PRIMARY KEY NOT NULL,
-                value TEXT,
-                timestamp INTEGER NOT NULL
-            );
-        `)
-		if err != nil {
-			return err
-		}
-		tx.Exec(`
-            INSERT INTO databaseMetadata (key, value, timestamp)
-            VALUES ("objectTracker.chexorsMod", ?, ?)
-        `, fmt.Sprint(ot.chexorsMod), time.Now().UnixNano())
-	} else {
-		rows, err = tx.Query(`
-            SELECT value
-            FROM databaseMetadata
-            WHERE key = "objectTracker.chexorsMod"
-        `)
-		if err != nil {
-			return err
-		}
-		if !rows.Next() {
-			rows.Close()
-			if err = rows.Err(); err != nil {
-				return err
-			}
-			return fmt.Errorf("no objectTracker.chexorsMod in databaseMetadata")
-		}
-		var cm int
-		err = rows.Scan(&cm)
-		rows.Close()
-		if err == nil {
-			err = rows.Err()
-		}
-		if err != nil {
-			return err
-		}
-		if cm != ot.chexorsMod {
-			return fmt.Errorf("objectTracker.chexorsMod mismatch; databaseMetadata has %d, runtime has %d", cm, ot.chexorsMod)
-		}
-	}
-	rows, err = tx.Query(`
-        SELECT name
-        FROM sqlite_master
-        WHERE name = 'objects'
-    `)
-	if err != nil {
-		return err
-	}
-	tableExists = rows.Next()
-	rows.Close()
-	if err = rows.Err(); err != nil {
-		return err
-	}
-	if !tableExists {
-		_, err = tx.Exec(`
             CREATE TABLE objects (
                 hash TEXT NOT NULL,
                 shard INTEGER NOT NULL,
                 timestamp INTEGER NOT NULL,
-                chexorRemainder INTEGER NOT NULL,
                 deletion INTEGER NOT NULL,
                 metahash TEXT, -- NULLable because not everyone stores the metadata
                 metadata BLOB,
                 CONSTRAINT ix_objects_hash_shard PRIMARY KEY (hash, shard)
             );
             CREATE INDEX ix_objects_hash_shard_timestamp ON objects (hash, shard, timestamp);
-            CREATE INDEX ix_objects_hash_shard_chexorRemainder ON objects (hash, shard, chexorRemainder);
         `)
-		if err != nil {
-			return err
-		}
-	}
-	ot.chexorsModTable = fmt.Sprintf("chexorFNV64ai_%d_%d", ot.ringPartPower, ot.chexorsMod)
-	rows, err = tx.Query(`
-        SELECT name
-        FROM sqlite_master
-        WHERE name = ?
-    `, ot.chexorsModTable)
-	if err != nil {
-		return err
-	}
-	tableExists = rows.Next()
-	rows.Close()
-	if err = rows.Err(); err != nil {
-		return err
-	}
-	if !tableExists {
-		_, err = tx.Exec(fmt.Sprintf(`
-            CREATE TABLE %s (
-                partition INTEGER NOT NULL,
-                remainder INTEGER NOT NULL,
-                chexorFNV64ai INTEGER NOT NULL,
-                CONSTRAINT ix_%s_partition_remainder PRIMARY KEY (partition, remainder)
-            );
-        `, ot.chexorsModTable, ot.chexorsModTable))
-		if err != nil {
-			return err
-		}
-	}
-	ot.metaChexorsModTable = fmt.Sprintf("metaChexorFNV64ai_%d_%d", ot.ringPartPower, ot.chexorsMod)
-	rows, err = tx.Query(`
-        SELECT name
-        FROM sqlite_master
-        WHERE name = ?
-    `, ot.metaChexorsModTable)
-	if err != nil {
-		return err
-	}
-	tableExists = rows.Next()
-	rows.Close()
-	if err = rows.Err(); err != nil {
-		return err
-	}
-	if !tableExists {
-		_, err = tx.Exec(fmt.Sprintf(`
-            CREATE TABLE %s (
-                partition INTEGER NOT NULL,
-                remainder INTEGER NOT NULL,
-                chexorFNV64ai INTEGER NOT NULL,
-                CONSTRAINT ix_%s_partition_remainder PRIMARY KEY (partition, remainder)
-            );
-        `, ot.metaChexorsModTable, ot.metaChexorsModTable))
 		if err != nil {
 			return err
 		}
@@ -332,7 +189,7 @@ func (ot *ObjectTracker) TempFile(hsh string, shard int, timestamp int64, sizeHi
 // account/container metadata. The ObjectTracker doesn't look too closely at
 // these, but it does compare the hashes and merges metadata sets if needed.
 func (ot *ObjectTracker) Commit(f fs.AtomicFileWriter, hsh string, shard int, timestamp int64, deletion bool, metahash string, metadata []byte) error {
-	hsh, ringPart, diskPart, chexorRemainder, err := ot.validateHash(hsh)
+	hsh, _, diskPart, err := ot.validateHash(hsh)
 	if err != nil {
 		return err
 	}
@@ -368,7 +225,6 @@ func (ot *ObjectTracker) Commit(f fs.AtomicFileWriter, hsh string, shard int, ti
 	}
 	var removeOlderPath string
 	var removeOlderTimestamp int64
-	var removeOlderMetahash string
 	if !rows.Next() {
 		rows.Close()
 		if err = rows.Err(); err != nil {
@@ -389,7 +245,6 @@ func (ot *ObjectTracker) Commit(f fs.AtomicFileWriter, hsh string, shard int, ti
 			return err
 		}
 		removeOlderTimestamp = dbTimestamp
-		removeOlderMetahash = dbMetahash
 		if metahash != dbMetahash {
 			metastore := kvt.Store{}
 			if err = json.Unmarshal(metadata, &metastore); err != nil {
@@ -441,143 +296,6 @@ func (ot *ObjectTracker) Commit(f fs.AtomicFileWriter, hsh string, shard int, ti
 		}
 	}
 	rows.Close()
-	rows, err = tx.Query(fmt.Sprintf(`
-        SELECT chexorFNV64ai
-        FROM %s
-        WHERE partition = ? AND remainder = ?
-    `, ot.chexorsModTable), ringPart, chexorRemainder)
-	if err != nil {
-		return err
-	}
-	var chexorFNV64a uint64
-	if !rows.Next() {
-		rows.Close()
-		if err = rows.Err(); err != nil {
-			return err
-		}
-		startHash, stopHash := ot.ringPartRange(ringPart)
-		rows, err = tx.Query(`
-            SELECT hash, shard, timestamp
-            FROM objects
-            WHERE hash BETWEEN ? AND ?
-        `, startHash, stopHash)
-		if err != nil {
-			return err
-		}
-		chexorFNV64as := make([]uint64, ot.chexorsMod)
-		var dbHash string
-		var dbShard int
-		var dbTimestamp int64
-		for rows.Next() {
-			if err = rows.Scan(&dbHash, &dbShard, &dbTimestamp); err != nil {
-				return err
-			}
-			hashBytes, err := hex.DecodeString(dbHash)
-			if err != nil {
-				ot.logger.Error("invalid dbHash for row", zap.String("ot.path", ot.path), zap.Int("diskPart", diskPart), zap.String("dbHash", dbHash), zap.Int("dbShard", dbShard), zap.Int64("dbTimestamp", dbTimestamp))
-				continue
-			}
-			remainder := int(hashBytes[len(hashBytes)-1]) % ot.chexorsMod
-			chexorFNV64as[remainder] = updateChexorFNV64a(chexorFNV64as[remainder], dbHash, dbTimestamp)
-		}
-		rows.Close()
-		if err = rows.Err(); err != nil {
-			return err
-		}
-		for remainder, chexorFNV64a := range chexorFNV64as {
-			_, err = tx.Exec(fmt.Sprintf(`
-                INSERT INTO %s (partition, remainder, chexorFNV64ai)
-                VALUES (?, ?, ?)
-            `, ot.chexorsModTable), ringPart, remainder, int(chexorFNV64a))
-			if err != nil {
-				if strings.HasPrefix(err.Error(), "UNIQUE constraint failed:") {
-					// This shouldn't happen but if it somehow does (say
-					// somebody deliberately deletes a row to have it
-					// recalculated, but that means there are many rows that
-					// are recalculated and don't need to be) it'll just log
-					// the failed insert and move on.
-					ot.logger.Error("row already existed", zap.String("ot.chexorsModTable", ot.chexorsModTable), zap.Int("ringPart", ringPart), zap.Int("remainder", remainder))
-					continue
-				}
-				return err
-			}
-		}
-		chexorFNV64a = chexorFNV64as[chexorRemainder]
-	} else {
-		var chexorFNV64ai int64
-		if err = rows.Scan(&chexorFNV64ai); err != nil {
-			return err
-		}
-		chexorFNV64a = uint64(chexorFNV64ai)
-	}
-	rows, err = tx.Query(fmt.Sprintf(`
-        SELECT chexorFNV64ai
-        FROM %s
-        WHERE partition = ? AND remainder = ?
-    `, ot.metaChexorsModTable), ringPart, chexorRemainder)
-	if err != nil {
-		return err
-	}
-	var metaChexorFNV64a uint64
-	if !rows.Next() {
-		rows.Close()
-		if err = rows.Err(); err != nil {
-			return err
-		}
-		startHash, stopHash := ot.ringPartRange(ringPart)
-		rows, err = tx.Query(`
-            SELECT hash, metahash
-            FROM objects
-            WHERE hash BETWEEN ? AND ?
-        `, startHash, stopHash)
-		if err != nil {
-			return err
-		}
-		chexorFNV64as := make([]uint64, ot.chexorsMod)
-		var dbHash string
-		var dbMetahash string
-		for rows.Next() {
-			if err = rows.Scan(&dbHash, &dbMetahash); err != nil {
-				return err
-			}
-			hashBytes, err := hex.DecodeString(dbHash)
-			if err != nil {
-				ot.logger.Error("invalid dbHash for row", zap.String("ot.path", ot.path), zap.Int("diskPart", diskPart), zap.String("dbHash", dbHash), zap.String("dbMetahash", dbMetahash))
-				continue
-			}
-			remainder := int(hashBytes[len(hashBytes)-1]) % ot.chexorsMod
-			chexorFNV64as[remainder] = updateMetaChexorFNV64a(chexorFNV64as[remainder], dbHash, dbMetahash)
-		}
-		rows.Close()
-		if err = rows.Err(); err != nil {
-			return err
-		}
-		for remainder, chexorFNV64a := range chexorFNV64as {
-			_, err = tx.Exec(fmt.Sprintf(`
-                INSERT INTO %s (partition, remainder, chexorFNV64ai)
-                VALUES (?, ?, ?)
-            `, ot.metaChexorsModTable), ringPart, remainder, int(chexorFNV64a))
-			if err != nil {
-				if strings.HasPrefix(err.Error(), "UNIQUE constraint failed:") {
-					// This shouldn't happen but if it somehow does (say
-					// somebody deliberately deletes a row to have it
-					// recalculated, but that means there are many rows that
-					// are recalculated and don't need to be) it'll just log
-					// the failed insert and move on.
-					ot.logger.Error("row already existed", zap.String("ot.metaChexorsModTable", ot.metaChexorsModTable), zap.Int("ringPart", ringPart), zap.Int("remainder", remainder))
-					continue
-				}
-				return err
-			}
-		}
-		metaChexorFNV64a = chexorFNV64as[chexorRemainder]
-	} else {
-		var chexorFNV64ai int64
-		if err = rows.Scan(&chexorFNV64ai); err != nil {
-			return err
-		}
-		metaChexorFNV64a = uint64(chexorFNV64ai)
-	}
 	if f == nil && !deletion {
 		// We keep the original timestamp if just committing new metadata.
 		timestamp = removeOlderTimestamp
@@ -598,36 +316,16 @@ func (ot *ObjectTracker) Commit(f fs.AtomicFileWriter, hsh string, shard int, ti
 	}
 	if removeOlderPath == "" {
 		_, err = tx.Exec(`
-            INSERT INTO objects (hash, shard, timestamp, chexorRemainder, deletion, metahash, metadata)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        `, hsh, shard, timestamp, chexorRemainder, dbdeletion, metahash, metadata)
+            INSERT INTO objects (hash, shard, timestamp, deletion, metahash, metadata)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `, hsh, shard, timestamp, dbdeletion, metahash, metadata)
 	} else {
 		_, err = tx.Exec(`
             UPDATE objects
             SET timestamp = ?, deletion = ?, metahash = ?, metadata = ?
             WHERE hash = ? AND shard = ?
         `, timestamp, dbdeletion, metahash, metadata, hsh, shard)
-		chexorFNV64a = updateChexorFNV64a(chexorFNV64a, hsh, removeOlderTimestamp)
-		metaChexorFNV64a = updateMetaChexorFNV64a(metaChexorFNV64a, hsh, removeOlderMetahash)
 	}
-	if err != nil {
-		return err
-	}
-	chexorFNV64a = updateChexorFNV64a(chexorFNV64a, hsh, timestamp)
-	_, err = tx.Exec(fmt.Sprintf(`
-        UPDATE %s
-        SET chexorFNV64ai = ?
-        WHERE partition = ? AND remainder = ?
-    `, ot.chexorsModTable), int(chexorFNV64a), ringPart, chexorRemainder)
-	if err != nil {
-		return err
-	}
-	metaChexorFNV64a = updateMetaChexorFNV64a(metaChexorFNV64a, hsh, metahash)
-	_, err = tx.Exec(fmt.Sprintf(`
-        UPDATE %s
-        SET chexorFNV64ai = ?
-        WHERE partition = ? AND remainder = ?
-    `, ot.metaChexorsModTable), int(metaChexorFNV64a), ringPart, chexorRemainder)
 	if err == nil {
 		err = tx.Commit()
 	}
@@ -644,7 +342,7 @@ func (ot *ObjectTracker) Commit(f fs.AtomicFileWriter, hsh string, shard int, ti
 }
 
 func (ot *ObjectTracker) wholeObjectDir(hsh string) (string, error) {
-	hsh, _, diskPart, _, err := ot.validateHash(hsh)
+	hsh, _, diskPart, err := ot.validateHash(hsh)
 	if err != nil {
 		return "", err
 	}
@@ -652,7 +350,7 @@ func (ot *ObjectTracker) wholeObjectDir(hsh string) (string, error) {
 }
 
 func (ot *ObjectTracker) wholeObjectPath(hsh string, shard int, timestamp int64) (string, error) {
-	hsh, _, diskPart, _, err := ot.validateHash(hsh)
+	hsh, _, diskPart, err := ot.validateHash(hsh)
 	if err != nil {
 		return "", err
 	}
@@ -661,7 +359,7 @@ func (ot *ObjectTracker) wholeObjectPath(hsh string, shard int, timestamp int64)
 
 // Lookup returns the stored information for the hsh and shard.
 func (ot *ObjectTracker) Lookup(hsh string, shard int) (timestamp int64, deletion bool, metahash string, metadata []byte, pth string, err error) {
-	hsh, _, diskPart, _, err := ot.validateHash(hsh)
+	hsh, _, diskPart, err := ot.validateHash(hsh)
 	if err != nil {
 		return 0, false, "", nil, "", err
 	}
@@ -687,66 +385,6 @@ func (ot *ObjectTracker) Lookup(hsh string, shard int) (timestamp int64, deletio
 	return timestamp, deletionInt == 1, metahash, metadata, pth, err
 }
 
-// Chexors returns the returns the chexors for the data contained in the
-// ringPart. This is used during replication to quickly determine if two disks
-// are already up to date with one another.
-func (ot *ObjectTracker) Chexors(ringPart int) ([]*uint64, error) {
-	diskPart := ringPart >> (ot.ringPartPower - ot.diskPartPower)
-	db := ot.dbs[diskPart]
-	rows, err := db.Query(fmt.Sprintf(`
-        SELECT remainder, chexorFNV64ai
-        FROM %s
-        WHERE partition = ?
-    `, ot.chexorsModTable), ringPart)
-	if err != nil {
-		return nil, err
-	}
-	var remainder int
-	var chexorFNV64ai int64
-	listing := make([]*uint64, ot.chexorsMod)
-	for rows.Next() {
-		if err = rows.Scan(&remainder, &chexorFNV64ai); err != nil {
-			ot.logger.Error("error with rows.Scan", zap.String("ot.path", ot.path), zap.String("ot.chexorsModTable", ot.chexorsModTable), zap.Int("ringPart", ringPart))
-			continue
-		}
-		chexorFNV64a := new(uint64)
-		*chexorFNV64a = uint64(chexorFNV64ai)
-		listing[remainder] = chexorFNV64a
-	}
-	rows.Close()
-	return listing, rows.Err()
-}
-
-// MetaChexors returns the returns the chexors for the metadata contained in
-// the ringPart. This is used during replication to quickly determine if two
-// disks are already up to date with one another.
-func (ot *ObjectTracker) MetaChexors(ringPart int) ([]*uint64, error) {
-	diskPart := ringPart >> (ot.ringPartPower - ot.diskPartPower)
-	db := ot.dbs[diskPart]
-	rows, err := db.Query(fmt.Sprintf(`
-        SELECT remainder, chexorFNV64ai
-        FROM %s
-        WHERE partition = ?
-    `, ot.metaChexorsModTable), ringPart)
-	if err != nil {
-		return nil, err
-	}
-	var remainder int
-	var chexorFNV64ai int64
-	listing := make([]*uint64, ot.chexorsMod)
-	for rows.Next() {
-		if err = rows.Scan(&remainder, &chexorFNV64ai); err != nil {
-			ot.logger.Error("error with rows.Scan", zap.String("ot.path", ot.path), zap.String("ot.metaChexorsModTable", ot.metaChexorsModTable), zap.Int("ringPart", ringPart))
-			continue
-		}
-		chexorFNV64a := new(uint64)
-		*chexorFNV64a = uint64(chexorFNV64ai)
-		listing[remainder] = chexorFNV64a
-	}
-	rows.Close()
-	return listing, rows.Err()
-}
-
 // ObjectTrackerItem is a single item returned by List.
 type ObjectTrackerItem struct {
 	Hash      string
@@ -755,16 +393,16 @@ type ObjectTrackerItem struct {
 	Metahash  string
 }
 
-// List returns the items for the ringPart and chexorRemainder given.
+// List returns the items for the ringPart given.
 //
 // This is for replication, auditing, that sort of thing.
-func (ot *ObjectTracker) List(ringPart int, chexorRemainder int) ([]*ObjectTrackerItem, error) {
+func (ot *ObjectTracker) List(ringPart int) ([]*ObjectTrackerItem, error) {
 	startHash, stopHash := ot.ringPartRange(ringPart)
-	_, _, startDiskPart, _, err := ot.validateHash(startHash)
+	_, _, startDiskPart, err := ot.validateHash(startHash)
 	if err != nil {
 		return nil, err
 	}
-	_, _, stopDiskPart, _, err := ot.validateHash(stopHash)
+	_, _, stopDiskPart, err := ot.validateHash(stopHash)
 	if err != nil {
 		return nil, err
 	}
@@ -774,8 +412,8 @@ func (ot *ObjectTracker) List(ringPart int, chexorRemainder int) ([]*ObjectTrack
 		rows, err := db.Query(`
 	        SELECT hash, shard, timestamp, metahash
 	        FROM objects
-	        WHERE hash BETWEEN ? AND ? AND chexorRemainder = ?
-	    `, startHash, stopHash, chexorRemainder)
+	        WHERE hash BETWEEN ? AND ?
+	    `, startHash, stopHash)
 		if err != nil {
 			return nil, err
 		}
@@ -793,17 +431,17 @@ func (ot *ObjectTracker) List(ringPart int, chexorRemainder int) ([]*ObjectTrack
 	return listing, nil
 }
 
-func (ot *ObjectTracker) validateHash(hsh string) (hshOut string, ringPart int, diskPart int, chexorRemainder int, err error) {
+func (ot *ObjectTracker) validateHash(hsh string) (hshOut string, ringPart int, diskPart int, err error) {
 	hsh = strings.ToLower(hsh)
 	if len(hsh) != 32 {
-		return "", 0, 0, 0, fmt.Errorf("invalid hash %q; length was %d not 32", hsh, len(hsh))
+		return "", 0, 0, fmt.Errorf("invalid hash %q; length was %d not 32", hsh, len(hsh))
 	}
 	hashBytes, err := hex.DecodeString(hsh)
 	if err != nil {
-		return "", 0, 0, 0, fmt.Errorf("invalid hash %q; decoding error: %s", hsh, err)
+		return "", 0, 0, fmt.Errorf("invalid hash %q; decoding error: %s", hsh, err)
 	}
 	upper := uint64(hashBytes[0])<<24 | uint64(hashBytes[1])<<16 | uint64(hashBytes[2])<<8 | uint64(hashBytes[3])
-	return hsh, int(upper >> (32 - ot.ringPartPower)), int(hashBytes[0] >> (8 - ot.diskPartPower)), int(hashBytes[len(hashBytes)-1]) % ot.chexorsMod, nil
+	return hsh, int(upper >> (32 - ot.ringPartPower)), int(hashBytes[0] >> (8 - ot.diskPartPower)), nil
 }
 
 func (ot *ObjectTracker) ringPartRange(ringPart int) (string, string) {
