@@ -18,13 +18,16 @@ package containerserver
 import (
 	"container/list"
 	"crypto/md5"
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
+	"github.com/apple/foundationdb/bindings/go/src/fdb"
 	"github.com/troubling/hummingbird/common/fs"
 )
 
@@ -248,11 +251,266 @@ func (l *lruEngine) getbypath(containerFile string) (c Container, err error) {
 
 // Get returns a database given the incoming vars.
 func (l *lruEngine) Get(vars map[string]string) (c Container, err error) {
+	if strings.HasPrefix(vars["container"], "foundationdb") {
+		return NewFoundationDBContainer(vars)
+	}
 	return l.getbypath(l.containerLocation(vars))
+}
+
+// TODOs:
+// * I think we could move all of this code into the proxy service.
+// * fdb.APIVersion should be called once by the overall service set up.
+// * It's opening an fdb connection for everything.
+// * Doesn't handle network and related errors well at all. If I turn off
+//   FoundationDB and try to run the usual code they have in their examples, it
+//   just seems to hang forever. We'd have to wrap the FoundationDB
+//   interactions with separate timer code that'd call Cancel on pending
+//   transactions or something.
+// * I'm fairly sure the Create part of these fdb containers isn't right. e.g.
+//   updating the put timestamp when creating an already created database,
+//   purging old metadata or whatever on database resurrection, etc.
+// * Doesn't handle the equivalent of the "expires" column in the sqlite3
+//   implementation.
+// * Things that change often, like ObjectCount and BytesUsed are updating the
+//   whole info entry; maybe room for optimization. FoundationDB has Add
+//   capabilities too that might be useful here.
+// * The metadata might be better served as a separate fdb:key/value I dunno.
+//   It was easier to always to read/write marshal/unmarshal it for now.
+
+type foundationDBContainer struct {
+	vars map[string]string
+}
+
+func NewFoundationDBContainer(vars map[string]string) (Container, error) {
+	return &foundationDBContainer{vars: vars}, nil
+}
+
+func (c *foundationDBContainer) GetInfo() (*ContainerInfo, error) {
+	ci := &ContainerInfo{
+		Account:   c.vars["account"],
+		Container: c.vars["container"],
+	}
+	if err := fdb.APIVersion(200); err != nil {
+		return nil, err
+	}
+	db, err := fdb.OpenDefault()
+	if err != nil {
+		return nil, err
+	}
+	if _, err = db.ReadTransact(func(rt fdb.ReadTransaction) (interface{}, error) {
+		data, err := rt.Get(fdb.Key(c.vars["account"] + "/" + c.vars["container"])).Get()
+		if err != nil {
+			return nil, err
+		}
+		if err = json.Unmarshal(data, &ci); err != nil {
+			return nil, err
+		}
+		if ci.RawMetadata == "" {
+			ci.Metadata = map[string][]string{}
+		} else if err = json.Unmarshal([]byte(ci.RawMetadata), &ci.Metadata); err != nil {
+			return nil, err
+		}
+		return nil, nil
+	}); err != nil {
+		return nil, err
+	}
+	return ci, nil
+}
+
+func (c *foundationDBContainer) readThenWrite(fn func(fdb.Transaction, *ContainerInfo) (*ContainerInfo, error)) (*ContainerInfo, error) {
+	ci := &ContainerInfo{
+		Account:   c.vars["account"],
+		Container: c.vars["container"],
+	}
+	if err := fdb.APIVersion(200); err != nil {
+		return nil, err
+	}
+	db, err := fdb.OpenDefault()
+	if err != nil {
+		return nil, err
+	}
+	if _, err = db.Transact(func(t fdb.Transaction) (interface{}, error) {
+		data, err := t.Get(fdb.Key(c.vars["account"] + "/" + c.vars["container"])).Get()
+		if err != nil {
+			return nil, err
+		}
+		if len(data) == 0 {
+			ci = nil
+		} else {
+			if err = json.Unmarshal(data, &ci); err != nil {
+				return nil, err
+			}
+			if ci.RawMetadata == "" {
+				ci.Metadata = map[string][]string{}
+			} else if err = json.Unmarshal([]byte(ci.RawMetadata), &ci.Metadata); err != nil {
+				return nil, err
+			}
+		}
+		if ci, err = fn(t, ci); err != nil {
+			return nil, err
+		}
+		return nil, nil
+	}); err != nil {
+		return nil, err
+	}
+	return ci, nil
+}
+
+func (c *foundationDBContainer) IsDeleted() (bool, error) {
+	ci, err := c.GetInfo()
+	if err != nil {
+		return false, err
+	}
+	return ci.DeleteTimestamp > ci.PutTimestamp, nil
+}
+
+func (c *foundationDBContainer) Delete(timestamp string) error {
+	_, err := c.readThenWrite(func(t fdb.Transaction, ci *ContainerInfo) (*ContainerInfo, error) {
+		if ci == nil {
+			return nil, ErrorNoSuchContainer
+		}
+		for k, v := range ci.Metadata {
+			if v[1] < timestamp {
+				ci.Metadata[k] = []string{"", timestamp}
+			}
+		}
+		ci.DeleteTimestamp = timestamp
+		data, err := json.Marshal(ci)
+		if err != nil {
+			return nil, err
+		}
+		t.Set(fdb.Key(c.vars["account"]+"/"+c.vars["container"]), data)
+		return ci, nil
+	})
+	return err
+}
+
+func (c *foundationDBContainer) ListObjects(limit int, marker string, endMarker string, prefix string, delimiter string, path *string, reverse bool, storagePolicyIndex int) ([]interface{}, error) {
+	return []interface{}{}, nil
+}
+
+func (c *foundationDBContainer) GetMetadata() (map[string]string, error) {
+	ci, err := c.GetInfo()
+	if err != nil {
+		return nil, err
+	}
+	metadata := map[string]string{}
+	for k, v := range ci.Metadata {
+		if v[0] != "" {
+			metadata[k] = v[0]
+		}
+	}
+	return metadata, nil
+}
+
+func (c *foundationDBContainer) UpdateMetadata(updates map[string][]string, timestamp string) error {
+	if len(updates) == 0 {
+		return nil
+	}
+	_, err := c.readThenWrite(func(t fdb.Transaction, ci *ContainerInfo) (*ContainerInfo, error) {
+		if ci == nil {
+			return nil, ErrorNoSuchContainer
+		}
+		metadata := map[string][]string{}
+		for k, v := range ci.Metadata {
+			metadata[k] = v
+		}
+		for k, v := range updates {
+			if ov, ok := ci.Metadata[k]; ok {
+				if ov[1] < v[1] {
+					metadata[k] = v
+				}
+			} else {
+				metadata[k] = v
+			}
+		}
+		size := 0
+		count := 0
+		for k, v := range metadata {
+			if ci.DeleteTimestamp != "" && v[1] < ci.DeleteTimestamp {
+				metadata[k] = []string{"", ci.DeleteTimestamp}
+			} else if v[0] != "" && strings.HasPrefix(strings.ToLower(k), "x-container-meta-") {
+				size += len(k) - 17
+				size += len(v[0])
+				count++
+			}
+		}
+		if count > maxMetaCount || size > maxMetaOverallSize {
+			return nil, ErrorInvalidMetadata
+		}
+		ci.Metadata = metadata
+		data, err := json.Marshal(metadata)
+		if err != nil {
+			return nil, err
+		}
+		ci.RawMetadata = string(data)
+		data, err = json.Marshal(ci)
+		if err != nil {
+			return nil, err
+		}
+		t.Set(fdb.Key(c.vars["account"]+"/"+c.vars["container"]), data)
+		return ci, nil
+	})
+	return err
+}
+
+func (c *foundationDBContainer) PutObject(name string, timestamp string, size int64, contentType string, etag string, storagePolicyIndex int, expires string) error {
+	return nil
+}
+
+func (c *foundationDBContainer) DeleteObject(name string, timestamp string, storagePolicyIndex int) error {
+	return nil
+}
+
+func (c *foundationDBContainer) ID() string {
+	return ""
+}
+
+func (c *foundationDBContainer) Close() error {
+	return nil
 }
 
 // Create creates a new container.
 func (l *lruEngine) Create(vars map[string]string, putTimestamp string, metadata map[string][]string, policyIndex, defaultPolicyIndex int) (bool, Container, error) {
+	if strings.HasPrefix(vars["container"], "foundationdb") {
+		cc, err := NewFoundationDBContainer(vars)
+		if err != nil {
+			return false, nil, err
+		}
+		c := cc.(*foundationDBContainer)
+		ci, err := c.readThenWrite(func(t fdb.Transaction, ci *ContainerInfo) (*ContainerInfo, error) {
+			if ci != nil {
+				return ci, nil
+			}
+			if policyIndex < 0 {
+				policyIndex = defaultPolicyIndex
+			}
+			ci = &ContainerInfo{
+				Account:            c.vars["account"],
+				Container:          c.vars["container"],
+				CreatedAt:          putTimestamp,
+				PutTimestamp:       putTimestamp,
+				StatusChangedAt:    putTimestamp,
+				StoragePolicyIndex: policyIndex,
+				Metadata:           metadata,
+			}
+			data, err := json.Marshal(ci.Metadata)
+			if err != nil {
+				return nil, err
+			}
+			ci.RawMetadata = string(data)
+			data, err = json.Marshal(ci)
+			if err != nil {
+				return nil, err
+			}
+			t.Set(fdb.Key(c.vars["account"]+"/"+c.vars["container"]), data)
+			return ci, nil
+		})
+		if err != nil {
+			return false, nil, err
+		}
+		return ci.CreatedAt == putTimestamp, c, nil
+	}
 	containerFile := l.containerLocation(vars)
 	created := false
 	c, err := l.Get(vars)
